@@ -23,4 +23,4 @@ const printResult = (data) => {
   }
 }
 
-getContents(process.argv[2]);
+getContents(process.argv[2], process.argv[3], process.argv[4]);
