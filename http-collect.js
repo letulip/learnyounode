@@ -8,15 +8,19 @@ const getContents = (url) => {
       rawData += data;
     });
     response.on(`end`, () => {
-      try {
-        console.log(rawData.length);
-        console.log(rawData);
-      } catch (e) {
-        console.error(e.message);
-      }
+      printResult(rawData);
     });
     response.on(`error`, console.error);
   }).on(`error`, console.error);
 };
+
+const printResult = (data) => {
+  try {
+    console.log(data.length);
+    console.log(data);
+  } catch (err) {
+    console.error(err.message);
+  }
+}
 
 getContents(process.argv[2]);
