@@ -28,5 +28,6 @@ const printResult = (data) => {
   } catch (err) {
     console.error(err.message);
   }
-}
+};
+
 awaitAnswers([process.argv[2], process.argv[3], process.argv[4]]);
