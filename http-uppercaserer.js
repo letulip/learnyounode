@@ -5,30 +5,34 @@ const map = require(`through2-map`);
 const http = require(`http`);
 const portNumber = process.argv[2];
 
-const createOutStream = (inStream) => {
-  inStream.pipe(map((chunk) => {
-    return chunk.toString().split(``).reverse().join(``);
-  })).pipe(outStream);
-};
+// my solution without map.pipe
+
+// const connectionListener = (request, response) => {
+//   if (request.method === `POST`) {
+    
+//     request.on(`data`, (data) => {
+//       response.write(data.toString().toUpperCase());
+//     });
+//     request.on(`end`, () => {
+//       response.writeHead(STATUS_OK, {"content-type": `text-plain`});
+//       response.end(``);
+//     });
+//   } else {
+//     return response.end(`send me a POST\n`);
+//   }
+  
+// };
+
+// suggested solution with map.pipe
 
 const connectionListener = (request, response) => {
   if (request.method === `POST`) {
-    
-    let rawData = ``;
-    request.on(`data`, (data) => {
-      rawData = `${data}`;
-      console.log(rawData.toUpperCase());
-    });
-    request.on(`end`, () => {
-      // console.log(rawData.toUpperCase());
-      
-      response.writeHead(STATUS_OK, {"content-type": `text-plain`});
-      response.end(``);
-    });
-    // createOutStream(response);
-    // response.on(`error`, console.error);
+    request.pipe(map((chunk) => {
+      return chunk.toString().toUpperCase();
+    })).pipe(response);
+  } else {
+    return response.end(`send me a POST\n`);
   }
-  
 };
 
 const server = http.createServer(connectionListener);
