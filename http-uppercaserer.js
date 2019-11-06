@@ -1,6 +1,5 @@
 const STATUS_OK = 200;
 
-const fs = require(`fs`);
 const map = require(`through2-map`);
 const http = require(`http`);
 const portNumber = process.argv[2];
