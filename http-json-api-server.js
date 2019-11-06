@@ -1,7 +1,6 @@
 const STATUS_OK = 200;
 const PARSE_TIME = `parsetime`;
 const UNIX_TIME = `unixtime`;
-const ISO = `iso`;
 
 // {
 //   "hour": 14,
@@ -12,24 +11,25 @@ const ISO = `iso`;
 // { "unixtime": 1376136615474 }
 
 const http = require(`http`);
+const url = require(`url`);
 const portNumber = process.argv[2];
 
 const convertDateTime = (url) => {
+  let timeOut = {};
+
   if (url.includes(PARSE_TIME)) {
-    let regex = /(\d+):(\d+):(\d+)/;
-    // console.log(url.match(regex)[0]);
+    const regex = /(\d+):(\d+):(\d+)/;
     const timeIn = url.match(regex)[0].split(`:`);
-    let timeOut = { hour: timeIn[0], minute: timeIn[1], second: timeIn[2]};
-    return JSON.stringify(timeOut);
+    timeOut = { hour: parseInt(timeIn[0]) + 3, minute: parseInt(timeIn[1]), second: parseInt(timeIn[2])};
+    
     
   }
   if (url.includes(UNIX_TIME)) {
-    // Date.parse();
-    let regex = /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)/;
-    // console.log(Date.parse(url.match(regex)[0]));
-    let timeOut = { unixtime: Date.parse(url.match(regex)[0])};
-    return JSON.stringify(timeOut);
+    const regex = /(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).(\d+)Z/;
+    timeOut = { unixtime: Date.parse(`${url.match(regex)[0]}`)};
   }
+
+  return JSON.stringify(timeOut);
 };
 
 const connectionListener = (request, response) => {
@@ -39,8 +39,10 @@ const connectionListener = (request, response) => {
   });
 
   if (request.method === `GET`) {
-    convertDateTime(request.url);
-    // console.log(request.url);
+    response.write(convertDateTime(request.url));
+
+    request.on(`data`, () => {
+    });
 
     request.on(`end`, () => {
       response.end(``);
